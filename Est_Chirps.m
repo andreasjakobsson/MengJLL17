@@ -3,7 +3,7 @@ function X = Est_Chirps (y,Z,Gamma,alpha,beta,rho)
 % Written by: Xiangxia Meng
 % Paper: "Estimation of chirp signals with time-varying amplitudes"
 % Authors: Xiangxia Meng, Andreas Jakobsson, Xiukun Li, Yahui Lei
-%
+
 % Input:
 %       y       - Data vector
 %       Z       - Predefined dictionary
@@ -60,7 +60,7 @@ for k = 1:MAX_ITER
         Xv = q - (H'*(U \ ( L \ (H*q) )));
     end
     X = reshape(Xv,R,P);
-
+    
     % Vv
     Vv1old = Vv1;
     Vv2old = Vv2;
@@ -72,47 +72,47 @@ for k = 1:MAX_ITER
         Vv3(N*(i-1)+1:N*i,1) = shrinkage(Gamma*Xv(R*(i-1)+1:R*i) + Uv3(N*(i-1)+1:N*i)...
             , beta/rho);
     end
-
+    
     % Uv
     Uv1 = Uv1 + diag(Gamma*X*Z') - Vv1;
     Uv2 = Uv2 + (Xv - Vv2);
     Uv3 = Uv3 + (vec(Gamma*X) - Vv3);
-
+    
     % diagnostics, reporting, termination checks
     history.objval(k)  = 0;%objective(A, y, lambda, X, Z,gamma,INDEX);
-
+    
     history.r_norm(k)  = norm(Xv - Vv2);
     history.s_norm(k)  = norm(-rho*(Vv2 - Vv2old));
-
+    
     history.eps_pri(k) = sqrt(N)*ABSTOL + RELTOL*max(norm(Xv), norm(-Vv2));
     history.eps_dual(k)= sqrt(N)*ABSTOL + RELTOL*norm(rho*Uv2);
-
+    
 %     if ~QUIET
 %         fprintf('%3d\t%10.4f\t%10.4f\t%10.4f\t%10.4f\t%10.2f\n', k, ...
 %             history.r_norm(k), history.eps_pri(k), ...
 %             history.s_norm(k), history.eps_dual(k), ...
 %         history.objval(k));
 %     end
-
+    
     if ~QUIET
         fprintf('%3d\t%10.4f\t%10.4f\t%10.4f\t%10.4f\t%10.4f\t%10.2f\n', k, ...
             history.r_norm(k), history.eps_pri(k), ...
             history.s_norm(k), history.eps_dual(k), ...
         norm(diag(Gamma*X*Z') - Vv1),norm(vec(Gamma*X) - Vv3) );
     end
-
+    
     if ( k > 1 && history.r_norm(k) < history.eps_pri(k) && ...
             history.s_norm(k) < history.eps_dual(k))
         break;
     end
-
+            
 end
 
 if ~QUIET
     toc(t_start);
 end
 
-end
+end    
 
 
 function [L, U] = factor(A, B, rho, m1, n1, P)

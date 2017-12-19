@@ -67,7 +67,7 @@ beta    = 4;
 rho     = 0.5;
 S = Est_Chirps (s,Z,Gamma,alpha,beta,rho);
 
-S1 = norms(S,2,1);
+S1 = sqrt(sum(S.* conj(S),1));
 [~,Gin] = max(S1);
 
 %% ADMM by updating dictionary
@@ -86,7 +86,7 @@ for j = 1:3
     beta    = 5;
     S = Est_Chirps (s,Zr,Gamma,alpha,beta,rho);
     
-    SR = norms(Gamma*S,2,1);
+    SR = sqrt(sum(Gamma*S.* conj(Gamma*S),1));
     [~,Ginr] = max(SR);
     fd1= fdr(:,Ginr);
     Z1 = Zr(:,Ginr);
